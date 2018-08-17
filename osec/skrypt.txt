@@ -1,0 +1,21 @@
+az group create --name rg-keyvault --location eastus
+az keyvault create --resource-group rg-keyvault --name keyvault-osec-lab-1111 --enabled-for-template-deployment true --location eastus
+ssh-keygen
+az keyvault secret set --vault-name keyvault-osec-lab-1111 --name keysecret --file ~/.ssh/azure_openshift_rsa
+az group create --name rg-openshift --location eastus
+az group show --name rg-openshift --query id
+az ad sp create-for-rbac --name sp-openshift  --role Contributor --password p@ssw0rd  --scopes "/subscriptions/945a32d0-9155-4004-9923-0cf7a19a69c5/resourceGroups/rg-openshift"
+
+output:
+{
+  "appId": "84a3f935-1f9c-4253-a52a-954cb4474d6e",
+  "displayName": "sp-openshift",
+  "name": "http://sp-openshift",
+  "password": "p@ssw0rd",
+  "tenant": "7f91886c-0b35-4aa8-bc51-35cf64a645f6"
+}
+
+vim azuredeploy.parameters.json #parametr appid
+
+az group deployment create -g rg-openshift --name myOpenShiftCluster --template-uri https://raw.githubusercontent.com/Microsoft/openshift-container-platform/master/azuredeploy.json       --parameters @./azuredeploy.parameters.json
+ 
