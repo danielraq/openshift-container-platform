@@ -1,0 +1,51 @@
+[masters]
+xx.xx.xx.xx openshift_public_hostname="xx.xx.xx.xx" openshift_hostname="xx.xx.xx.xx"
+
+[etcd]
+xx.xx.xx.xx
+
+[nodes]
+xx.xx.xx.xx openshift_hostname="xx.xx.xx.xx" openshift_node_labels="{'region':'master','zone':'default'}"
+xx.xx.xx.xx openshift_hostname="xx.xx.xx.xx" openshift_node_labels="{'region':'infra','zone':'default'}" openshift_node_group_name="node-config-infra"
+xx.xx.xx.xx openshift_hostname="xx.xx.xx.xx" openshift_node_labels="{'region':'primary','zone':'default'}" openshift_node_group_name="node-config-primary"
+xx.xx.xx.xx openshift_hostname="xx.xx.xx.xx" openshift_node_labels="{'region':'primary','zone':'default'}" openshift_node_group_name="node-config-primary"
+xx.xx.xx.xx openshift_hostname="xx.xx.xx.xx" openshift_node_labels="{'region':'primary','zone':'default'}" openshift_node_group_name="node-config-primary"
+
+
+
+[OSEv3:children]
+masters
+nodes
+etcd
+
+[OSEv3:vars]
+
+ansible_user=
+ansible_become=yes
+
+openshift_deployment_type=origin
+openshift_release=v3.9
+openshift_master_default_subdomain=apps.okd-cm-test.raiffeisen.pl
+openshift_master_identity_providers=[{'name': 'htpasswd_auth','login': 'true',
+ 'challenge': 'true','kind': 'HTPasswdPasswordIdentityProvider',
+ 'filename': '/etc/origin/master/htpasswd'}]
+
+debug_level=2
+openshift_install_examples=true
+
+osm_use_cockpit=true
+osm_cockpit_plugins=['cockpit-kubernetes']
+
+openshift_logging_install_logging=false
+
+openshift_hosted_prometheus_deploy=true
+
+openshift_metrics_install_metrics=true
+openshift_metrics_start_cluster=true
+openshift_metrics_startup_timeout=120
+openshift_metrics_hawkular_nodeselector={"region":"infra"}
+openshift_metrics_cassandra_nodeselector={"region":"infra"}
+openshift_metrics_heapster_nodeselector={"region":"infra"}
+
+openshift_router_selector='region=infra'
+openshift_registry_selector='region=infra'
